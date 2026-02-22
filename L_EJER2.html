@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<meta charset="utf-8" />
+
+<head>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"></script>
+    <style>
+        #map {
+            width: 100%;
+            height: 710px;
+            box-shadow: 5px 5px 5px #888;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="map"></div>
+    <script>
+        var osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a>'
+                + 'contributors', maxZoom: 18
+        });
+        var map = L.map('map', {
+            center: [1.6203923764045747, -75.60424843014682],
+            zoom: 15,
+            layers: osm,
+            scrollWheelZoom: true
+        });
+
+        
+        L.control.scale().addTo(map);
+        // L.control.scale({position: 'bottomright', imperial: false}).addTo(map);
+
+
+        var marcador_uni = L.marker(
+            [1.6204335302520343, -75.60420859335156]
+        ).addTo(map)
+            .bindPopup('Universidad de la Amazonia')
+            .openPopup();
+
+        var marcador_alc = L.marker(
+            [1.6148955632815833, -75.61379294510202]
+        ).addTo(map)
+            .bindPopup('Alcaldia de Florencia')
+            .openPopup();
+
+        var circle = L.circle([1.6148955632815833, -75.61379294510202], 500, {
+            color: 'red',
+            fillColor: '#f03',
+            fillOpacity: 0.5
+        }).addTo(map);
+
+        var marcador_pla = L.marker(
+            [1.6150280991008272, -75.61330472155346]
+        ).addTo(map)
+            .bindPopup('Plaza Santander')
+            .openPopup();
+
+        var polygon = L.polygon([
+            [1.6154035743022421, -75.61302992681081],
+            [1.615178926154387, -75.6137088211696],
+            [1.6145118967980416, -75.61349941909826],
+            [1.6146899312162528, -75.6127856561719]
+        ]).addTo(map)
+            .bindPopup('Plaza Santander');
+
+
+        var pointA = new L.LatLng(1.6178596139140573, -75.60425111716862); 
+        var pointB = new L.LatLng(1.6181429723161713, -75.60387137244659); 
+        var pointC = new L.LatLng(1.618490487283569, -75.60411740423832); 
+        var pointD = new L.LatLng(1.6185974149538658, -75.6040157824113); 
+        var pointE = new L.LatLng(1.6190785894004265, -75.60445970933986); 
+        var pointF = new L.LatLng(1.6192924446733377, -75.60455598264967); 
+        var pointG = new L.LatLng(1.6200997481548787, -75.6050052581017); 
+        var latlngs = [pointA, pointB,pointC,pointD,pointE,pointF,pointG];
+        var polyline = L.polyline(
+         latlngs, { color: 'red' }
+            )
+            .addTo(map)
+            .bindPopup('Ruta vivienda-Universidad');       
+
+        function onMapClick(e) {
+            alert("Has hecho clic en " + e.latlng);
+        }
+        map.on('click', onMapClick);
+  
+
+        
+
+    </script>
+</body>
+
+</html>

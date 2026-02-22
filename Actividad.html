@@ -1,0 +1,151 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mapa</title>
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"></script>
+    <script type="text/javascript" src="Paises.js"></script>
+
+
+
+    <style>
+        #map {
+            width: 100%;
+            height: 42rem;
+            box-shadow: 5px 5px 5px #888;
+        }
+    </style>
+
+</head>
+
+<body>
+    <div id="map">
+
+    </div>
+    <script>
+
+
+
+        var osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a>'
+                + 'contributors',
+            maxZoom: 18
+        });
+
+        var google = L.tileLayer('http://www.google.cn/maps/vt?lyrs=s@189&gl=cn&x={x}&y={y}&z={z}', {
+            maxZoom: 18
+        });
+
+        var maps = L.tileLayer('https://mt1.google.com/vt/lyrs=r&x={x}&y={y}&z={z}', {
+            maxZoom: 18
+        });
+
+        var paises = new L.tileLayer.wms("http://localhost:8080/geoserver/wms", {
+            layers: 'earth:paises_mundo',
+            format: 'image/png',
+            transparent: true,
+            attribution: "earth"
+        });
+
+        var ciudades = new L.tileLayer.wms("http://localhost:8080/geoserver/wms", {
+            layers: 'earth:ciudades_mundo',
+            format: 'image/png',
+            transparent: true,
+            attribution: "earth"
+        });
+
+
+        var municipios = new L.tileLayer.wms("http://localhost:8080/geoserver/wms", {
+            layers: 'earth:limitesmunicipales',
+            format: 'image/png',
+            transparent: true,
+            attribution: "earth"
+        });
+
+        var departamentos = new L.tileLayer.wms("http://localhost:8080/geoserver/wms", {
+            layers: 'earth:',
+            format: 'image/png',
+            transparent: true,
+            attribution: "earth"
+        });
+
+
+        var baseMaps = {
+            "OpenStreetMap": osm,
+            "Google": google,
+            "Maps": maps
+        };
+        var overlayMaps = {
+            "<img src='https://secure.webtoolhub.com/static/resources/icons/set20/309ee4e2927.png' height=15px, width=15px/> Paises": paises,
+            "<img src='https://mappinggis.com/webmapping/city.png' height=15px, width=15px/> Ciudades": ciudades,
+            "Municipios": municipios
+        };
+
+        var map = L.map('map', {
+            center: new L.LatLng(41.66, -4.72),
+            zoom: 4,
+            // layers: [osm, google, maps, paises, ciudades, municipios],
+            scrollWheelZoom: false,
+        });
+
+
+
+
+        L.control.layers(baseMaps, overlayMaps).addTo(map);
+        L.control.scale({ position: 'bottomright', imperial: false }).addTo(map);
+
+
+
+        function getColor(d) {
+            return d > 100000000 ? '#000000' :
+                d > 50000000 ? '#BD0026' :
+                    d > 20000000 ? '#E31A1C' :
+                        d > 10000000 ? '#FC4E2A' :
+                            d > 5000000 ? '#FD8D3C' :
+                                d > 2000000 ? '#FEB24C' :
+                                    d > 1000000 ? '#FED976' :
+                                        '#FFEDA0';
+        };
+
+
+        function style(feature) {
+            return {
+                fillColor: getColor(feature.properties.pop_est),
+                weight: 2,
+                opacity: 1,
+                color: 'white',
+                dashArray: '3',
+                fillOpacity: 0.7
+            };
+        }
+
+        function popup(feature, layer) {
+            if (feature.properties && feature.properties.name) {
+                layer.bindPopup(feature.properties.name);
+            }
+        }
+
+
+        var countryStyle = {
+            'color': "#e12a2a",
+            'fillColor': 0,
+            'weight': 2,
+            'opacity': 0.6,
+            'dashArray': 3,
+        };
+
+
+
+        L.geoJson(Paises_datos, {
+            style: style,
+            onEachFeature: popup
+        }).addTo(map);
+
+
+    </script>
+</body>
+
+</html>
